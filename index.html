@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoltCalc - Electricity Bill Estimator</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-dark text-light">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-blur sticky-top border-bottom border-secondary">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <i class="fa-solid fa-bolt text-warning fs-3"></i>
+                <span class="fw-bold tracking-wide">VoltCalc</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#estimator">Bill Estimator</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#analytics">Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#appliances">Appliance Calculator</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#suggestions">Energy Saving Tips</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        
+        <!-- Header -->
+        <header class="text-center my-4">
+            <h1 class="fw-bold text-gradient">Electricity Bill Estimator</h1>
+            <p class="text-muted">Calculate slab-wise bills, analyze consumption history, and optimize your energy usage.</p>
+        </header>
+
+        <!-- Dashboard Row -->
+        <div class="row g-4" id="estimator">
+            <!-- Estimator Panel -->
+            <div class="col-lg-5">
+                <div class="card card-custom h-100">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-calculator text-primary fs-4"></i>
+                        <h4 class="m-0 fw-bold">Estimate Bill</h4>
+                    </div>
+                    <div class="card-body px-4">
+                        <form id="calc-form">
+                            <!-- Inputs -->
+                            <div class="mb-3">
+                                <label for="prev-reading" class="form-label text-muted">Previous Reading (kWh)</label>
+                                <input type="number" class="form-control bg-dark border-secondary text-light" id="prev-reading" placeholder="e.g. 1200" required min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="curr-reading" class="form-label text-muted">Current Reading (kWh)</label>
+                                <input type="number" class="form-control bg-dark border-secondary text-light" id="curr-reading" placeholder="e.g. 1550" required min="0">
+                            </div>
+                            <div class="mb-3">
+                                <label for="fixed-charge" class="form-label text-muted">Fixed Charges ($)</label>
+                                <input type="number" class="form-control bg-dark border-secondary text-light" id="fixed-charge" value="10" min="0">
+                            </div>
+
+                            <h5 class="mt-4 mb-3 fw-bold text-primary">Slab Tariff (Rate per kWh)</h5>
+                            <div class="row g-2 mb-3">
+                                <div class="col">
+                                    <label class="form-label text-muted small">0 - 100 units</label>
+                                    <input type="number" step="0.01" class="form-control bg-dark border-secondary text-light" id="rate-1" value="0.12">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label text-muted small">101 - 300 units</label>
+                                    <input type="number" step="0.01" class="form-control bg-dark border-secondary text-light" id="rate-2" value="0.18">
+                                </div>
+                                <div class="col">
+                                    <label class="form-label text-muted small">301+ units</label>
+                                    <input type="number" step="0.01" class="form-control bg-dark border-secondary text-light" id="rate-3" value="0.25">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-3 btn-glow">
+                                <i class="fa-solid fa-bolt me-2"></i>Calculate & Log
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Panel -->
+            <div class="col-lg-7">
+                <div class="card card-custom h-100">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-receipt text-success fs-4"></i>
+                        <h4 class="m-0 fw-bold">Calculation Summary</h4>
+                    </div>
+                    <div class="card-body px-4 d-flex flex-column justify-content-between">
+                        <div class="text-center my-3">
+                            <span class="text-muted d-block uppercase tracking-wider small">Estimated Total Bill</span>
+                            <h2 class="display-3 fw-bold text-success my-2" id="total-bill">$0.00</h2>
+                            <p class="text-light" id="total-units">0 kWh consumed</p>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-dark table-borderless text-muted mb-0">
+                                <thead>
+                                    <tr class="border-bottom border-secondary">
+                                        <th>Details</th>
+                                        <th class="text-end">Units</th>
+                                        <th class="text-end">Rate</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="slab-breakdown">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-muted">Enter details and click Calculate.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <section class="py-5" id="analytics">
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card card-custom h-100">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa-solid fa-chart-column text-info fs-4"></i>
+                                <h4 class="m-0 fw-bold">Monthly Consumption History</h4>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger" id="clear-history">Clear History</button>
+                        </div>
+                        <div class="card-body px-4 py-3">
+                            <div style="position: relative; height: 300px; width: 100%;">
+                                <canvas id="history-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card card-custom h-100">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex align-items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-warning fs-4"></i>
+                            <h4 class="m-0 fw-bold">Quick Metrics</h4>
+                        </div>
+                        <div class="card-body px-4 d-flex flex-column justify-content-around">
+                            <div class="metric-box bg-dark-light p-3 rounded d-flex align-items-center gap-3">
+                                <i class="fa-solid fa-gauge text-info fs-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">Average Units</small>
+                                    <h4 class="fw-bold m-0" id="avg-units">0 kWh</h4>
+                                </div>
+                            </div>
+                            <div class="metric-box bg-dark-light p-3 rounded d-flex align-items-center gap-3">
+                                <i class="fa-solid fa-wallet text-success fs-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">Average Cost</small>
+                                    <h4 class="fw-bold m-0" id="avg-cost">$0.00</h4>
+                                </div>
+                            </div>
+                            <div class="metric-box bg-dark-light p-3 rounded d-flex align-items-center gap-3">
+                                <i class="fa-solid fa-industry text-danger fs-3"></i>
+                                <div>
+                                    <small class="text-muted d-block">CO2 Footprint</small>
+                                    <h4 class="fw-bold m-0" id="co2-footprint">0 kg CO2</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Appliance Calculator & Energy suggestions -->
+        <div class="row g-4" id="appliances">
+            <!-- Appliance Estimator -->
+            <div class="col-lg-7">
+                <div class="card card-custom h-100">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-plug text-primary fs-4"></i>
+                        <h4 class="m-0 fw-bold">Appliance Consumption Estimator</h4>
+                    </div>
+                    <div class="card-body px-4">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover border-secondary vertical-align-middle">
+                                <thead>
+                                    <tr class="text-muted">
+                                        <th>Appliance</th>
+                                        <th>Watts</th>
+                                        <th>Hours/Day</th>
+                                        <th class="text-end">Est. Monthly kWh</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Air Conditioner (1.5 Ton)</td>
+                                        <td><input type="number" class="form-control bg-dark text-light border-secondary form-control-sm w-80" id="ac-watts" value="1500"></td>
+                                        <td><input type="number" class="form-control bg-dark text-light border-secondary form-control-sm w-80" id="ac-hours" value="6"></td>
+                                        <td class="text-end fw-bold text-primary" id="ac-kwh">270.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Refrigerator</td>
+                                        <td><input type="number" class="form-control bg-dark text-light border-secondary form-control-sm w-80" id="ref-watts" value="200"></td>
+                                        <td><input type="number" class="form-control bg-dark text-light border-secondary form-control-sm w-80" id="ref-hours" value="24"></td>
+                                        <td class="text-end fw-bold text-primary" id="ref-kwh">144.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>LED Television</td>
+                                        <td><input type="number" class="form-control bg-dark text-light border-secondary form-control-sm w-80" id="tv-watts" value="100"></td>
+                                        <td><input type="number" class="form-control bg-dark text-light border-secondary form-control-sm w-80" id="tv-hours" value="4"></td>
+                                        <td class="text-end fw-bold text-primary" id="tv-kwh">12.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Laptops & Devices</td>
+                                        <td><input type="number" class="form-control bg-dark text-light border-secondary form-control-sm w-80" id="lap-watts" value="65"></td>
+                                        <td><input type="number" class="form-control bg-dark text-light border-secondary form-control-sm w-80" id="lap-hours" value="8"></td>
+                                        <td class="text-end fw-bold text-primary" id="lap-kwh">15.6</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-secondary bg-dark-light border-secondary d-flex justify-content-between align-items-center mt-3">
+                            <span class="fw-bold">Total Estimated Appliance Consumption:</span>
+                            <span class="fs-5 fw-bold text-info" id="appliance-total">441.6 kWh</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Energy Suggestions -->
+            <div class="col-lg-5" id="suggestions">
+                <div class="card card-custom h-100">
+                    <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-warning fs-4"></i>
+                        <h4 class="m-0 fw-bold">Energy-Saving Suggestions</h4>
+                    </div>
+                    <div class="card-body px-4">
+                        <div class="list-group list-group-flush" id="saving-tips">
+                            <!-- JS will dynamically populate tips based on consumption -->
+                            <div class="list-group-item bg-transparent border-secondary text-muted px-0 py-3 d-flex gap-3">
+                                <i class="fa-solid fa-circle-check text-success fs-5"></i>
+                                <div>
+                                    <h6 class="fw-bold text-light m-0">AC Temp Settings</h6>
+                                    <p class="small m-0 mt-1">Keep your Air Conditioner at 24°C (75°F) to save up to 18% electricity.</p>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-secondary text-muted px-0 py-3 d-flex gap-3">
+                                <i class="fa-solid fa-circle-check text-success fs-5"></i>
+                                <div>
+                                    <h6 class="fw-bold text-light m-0">Phantom Loads</h6>
+                                    <p class="small m-0 mt-1">Unplug chargers and stand-by electronics. Phantom power accounts for 5-10% of energy bills.</p>
+                                </div>
+                            </div>
+                            <div class="list-group-item bg-transparent border-secondary text-muted px-0 py-3 d-flex gap-3">
+                                <i class="fa-solid fa-circle-check text-success fs-5"></i>
+                                <div>
+                                    <h6 class="fw-bold text-light m-0">LED Lighting Upgrade</h6>
+                                    <p class="small m-0 mt-1">Switch from incandescent bulbs to LED. LEDs consume 75% less energy and last 25x longer.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer border-top border-secondary py-4 text-center text-muted mt-5 bg-blur">
+        <div class="container">
+            <p class="mb-0">VoltCalc Electricity Bill Estimator &copy; 2026. Made for Professional Placements Portfolio.</p>
+        </div>
+    </footer>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+</body>
+</html>

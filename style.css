@@ -1,0 +1,111 @@
+/* Core Design Tokens & Theme overrides */
+:root {
+    --bg-dark: #0f111a;
+    --card-bg: rgba(22, 28, 45, 0.65);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --primary-color: #3b82f6;
+    --primary-glow: rgba(59, 130, 246, 0.25);
+    --success-color: #10b981;
+    --success-glow: rgba(16, 185, 129, 0.25);
+    --warning-color: #f59e0b;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(at 10% 20%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+        radial-gradient(at 90% 80%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+    color: var(--text-main);
+    min-height: 100vh;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #60a5fa 0%, #10b981 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism Navbar */
+.bg-blur {
+    background-color: rgba(15, 17, 26, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Custom Card Component */
+.card-custom {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-4px);
+    border-color: rgba(59, 130, 246, 0.25);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--primary-glow);
+}
+
+.bg-dark-light {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Custom inputs */
+.form-control {
+    border-radius: 8px;
+    padding: 10px 14px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 10px var(--primary-glow);
+    border-color: var(--primary-color);
+}
+
+/* Custom buttons */
+.btn-glow {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.btn-glow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+    pointer-events: none;
+}
+
+.btn-glow:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Metric Boxes */
+.metric-box {
+    border: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
+}
+.metric-box:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Responsive details */
+.w-80 {
+    width: 80px;
+}
+@media (max-width: 768px) {
+    .w-80 {
+        width: 100%;
+    }
+}
